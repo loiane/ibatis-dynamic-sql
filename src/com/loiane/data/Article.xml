@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Article">
+
+    <select id="selectArticleByTitle" parameterType="com.loiane.model.Article"
+     resultType="Article">
+    	SELECT id, title, author
+		FROM article
+		WHERE id_status = 1
+		<if test="title != null">
+			AND title LIKE #{title}
+		</if> 
+    </select>
+    
+    <select id="selectArticleByTitleAndAuthor" parameterType="com.loiane.model.Article"
+     resultType="Article">
+    	SELECT id, title, author
+		FROM article
+		WHERE id_status = 1
+		<if test="title != null">
+			AND title LIKE #{title}
+		</if> 
+		<if test="author != null">
+			AND author LIKE #{author}
+		</if>
+    </select>
+    
+    <select id="selectArticleByTitleOrAuthorOrCategory" parameterType="com.loiane.model.Article"
+     resultType="Article">
+    	SELECT id, title, author
+		FROM article
+		WHERE id_status = 1
+		<choose>
+			<when test="title != null">
+				AND title LIKE #{title}
+			</when> 
+			<when test="author != null">
+				AND author LIKE #{author}
+			</when>
+			<otherwise>
+				AND id_category = 3
+			</otherwise>
+		</choose>
+    </select>
+	
+	 <select id="selectArticleByTitleAndAuthorDynamic" parameterType="com.loiane.model.Article"
+     resultType="Article">
+    	SELECT id, title, author
+		FROM article
+		<where>
+			<if test="title != null">
+				title LIKE #{title}
+			</if> 
+			<if test="author != null">
+				AND author LIKE #{author}
+			</if>
+		</where>
+    </select>
+    
+    <select id="selectArticleByTitleAndAuthorDynamic2" parameterType="com.loiane.model.Article"
+     resultType="Article">
+    	SELECT id, title, author
+		FROM article
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="title != null">
+				title LIKE #{title}
+			</if> 
+			<if test="author != null">
+				AND author LIKE #{author}
+			</if>
+		</trim>
+    </select>
+    
+    <select id="selectArticleByListCategories" resultType="Article">
+    	SELECT id, title, author
+		FROM article
+		WHERE id_category IN
+		<foreach item="category" index="index" collection="list"
+			open="(" separator="," close=")">
+			#{category}
+		</foreach> 
+    </select>
+    
+</mapper>
